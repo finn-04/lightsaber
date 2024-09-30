@@ -1,9 +1,9 @@
 # lightsaber
 computer engineering capstone project: Anna, Maggie, Phyona
 
-        \    ,-^-.
-         \   !oYo!
-          \ /./=\.\______
+             ,-^-.
+             !oYo!
+            /./=\.\______
                ##        )\/\
                 ||-----w||
                 ||      ||
