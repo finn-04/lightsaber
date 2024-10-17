@@ -1,0 +1,22 @@
+const int pirPin = 2;      // PIR sensor output pin
+const int speakerPin = 5;  // Speaker connected to pin 5
+
+void setup() {
+  pinMode(pirPin, INPUT);      // Set PIR sensor pin as input
+  pinMode(speakerPin, OUTPUT); // Set speaker pin as output
+  Serial.begin(9600);          // Initialize serial monitor (optional for debugging)
+}
+
+void loop() {
+  int motion = digitalRead(pirPin); // Read the PIR sensor state
+
+  if (motion == HIGH) {  // If motion is detected
+    Serial.println("Motion detected!");
+    tone(speakerPin, 1000, 500); // Play 1kHz sound for 500ms
+    delay(500);                  // Wait for the sound to complete
+  } else {
+    noTone(speakerPin); // Stop sound if no motion detected
+  }
+
+  delay(100); // Small delay to avoid excessive polling
+}
