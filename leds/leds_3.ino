@@ -43,24 +43,42 @@ void loop() {
   switch (rgb_range)
   {
     case 0:
-      strip.Color (255, g_up, 0);
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        strip.setPixelColor (i, strip.Color (255, g_up, 0));
+      }
       break;
     case 1:
-      strip.Color (r_down, 255, 0);
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        strip.setPixelColor (i, strip.Color (r_down, 255, 0));
+      }
       break;
     case 2:
-      strip.Color (0, 255, b_up);
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        strip.setPixelColor (i, strip.Color (0, 255, b_up));
+      }
       break;
     case 3:
-      strip.Color (0, g_down, 255);
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        strip.setPixelColor (i, strip.Color (0, g_down, 255));
+      }
       break;
     case 4:
-      strip.Color (r_up, 0, 255);
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        strip.setPixelColor (i, strip.Color (r_up, 0 , 255));
+      }
       break;
     case 5:
-      strip.Color (255, 0, b_down);
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        strip.setPixelColor (i, strip.Color (255, 0, b_down));
+      }
       break;
   }
   strip.show ();
-  delay (1);
+  delay (250);
 }
