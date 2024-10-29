@@ -1,0 +1,77 @@
+#include <Wire.h>
+
+long AX, AY, AZ;
+float gfX, gfY, gfZ;
+
+
+long gyrX, gyrY, gyrZ;
+float rotX, rotY, rotZ;
+
+
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("initializing I2C...");
+  Wire.begin();
+  Serial.println("Setting up MPU6050...");
+  setupMPU();
+ 
+}
+
+void loop() {
+  recordAccelRegisters();
+  //recordGyroRegisters();
+  printData();
+  delay(100);
+ 
+}
+
+void setupMPU(){
+  Wire.beginTransmission(0b1101000);
+
+  if (Wire.endTransmission()==0){
+    Serial.println("MPU CONNECTED... I think... not sure what wire.endtransmission does");
+  }else{
+    Serial.println("not connection... Wire.endTransmission return 1");
+    while(1);
+  }
+  Wire.write(0x6B);
+  Wire.write(0b00000000);
+  Wire.endTransmission();
+  // set up for gyroscope
+  Wire.beginTransmission(0b1101000);
+  Wire.write(0x1C);
+  Wire.write(0b00000000);
+  Wire.endTransmission();
+  
+
+}
+void processAccelData(){
+  gfX = AX/16383.0;
+  gfY = AY/16383.0;
+  gfZ = AZ/16383.0;
+  
+
+}
+
+void recordAccelRegisters(){
+  Wire.beginTransmission(0b1101000);
+  Wire.write(0x3B);
+  Wire.endTransmission();
+  Wire.requestFrom(0b1101000,6);
+  while(Wire.available()<6); //3B through 40 registers
+  AX = Wire.read()<<8|Wire.read();
+  
+  AY = Wire.read()<<8|Wire.read();
+  AZ = Wire.read()<<8|Wire.read();
+
+  processAccelData();
+}
+
+void printData(){
+  Serial.print("Tring to print acceleration");
+  Serial.print(gfX);
+  Serial.print(gfY);
+  Serial.print(gfZ);
+}
+
