@@ -15,12 +15,13 @@ BLECharacteristic myCharacteristic ("12345678-1234-5678-1234-56789abcdef0", BLER
 Adafruit_NeoPixel strip (LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 String value;
 uint32_t color = strip.Color (255, 0, 0);
-// track if color is controlled by Bluetooth or potentiometer
+// Track if color is controlled by Bluetooth or potentiometer
 bool control_ble = false;
 volatile bool circuitOn = false;  // Track the circuit state
 
 void setup () {
   Serial.begin (9600);
+  
   if (!BLE.begin ()) {
     Serial.println ("starting BLE failed");
     while (1);
@@ -38,8 +39,8 @@ void setup () {
   strip.show ();
   strip.setBrightness (255);
 
-  pinMode(BUTTON_PIN, INPUT_PULLUP); // Set button pin as input with pull-up resistor
-  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), toggleCircuit, FALLING); // Attach interrupt
+  pinMode(BUTTON_PIN, INPUT); // Set the button pin as input (with external pull-down)
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), toggleCircuit, RISING); // Attach interrupt for rising edge
 
   for (int i = 0; i < LED_COUNT; i++) {
     strip.setPixelColor (i, color);
