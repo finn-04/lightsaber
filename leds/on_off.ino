@@ -1,8 +1,11 @@
 # include <Adafruit_NeoPixel.h>
 # include <ArduinoBLE.h>
 
+// pin connected to our lights
 # define LED_PIN    6
+// number of lights attached
 # define LED_COUNT  20
+// pin conected to our potentiometer
 # define POT_PIN    A0
 
 const int minimum = 0;
@@ -27,7 +30,8 @@ BLEService myService ("180F");
 // BLERead | BLEWrite = permissions for characteristic
 // 20 = maximum length of characteristic value in bytes
 BLECharacteristic myCharacteristic ("12345678-1234-5678-1234-56789abcdef0", BLERead | BLEWrite, 20);
-
+// declare NeoPixel object: strip (number of pixels, pin number, flags)
+// NEO_KHZ800 = 800 KHz bitstream for our strip
 Adafruit_NeoPixel strip (LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 String value;
 uint32_t color = strip.Color (255, 0, 0);
@@ -62,9 +66,12 @@ void setup ()
   myCharacteristic.setValue ("0");
   BLE.advertise ();
   Serial.println ("BLE device active, waiting for connections...");
+  // initialize strip
   strip.begin ();
+  // turn off to start
   strip.clear ();
   strip.show ();
+  // brightness maximum = 255
   strip.setBrightness (255);
 }
 
@@ -72,7 +79,9 @@ void light_up ()
 {
   for (int i = 0; i < LED_COUNT; i++)
   {
+    // set color
     strip.setPixelColor (i, color);
+    // update strip
     strip.show ();
     delay (15);
   }
@@ -82,6 +91,7 @@ void turn_off ()
 {
   for (int i = LED_COUNT - 1; i >= 0; i--)
   {
+    // turn off
     strip.setPixelColor (i, strip.Color (0, 0, 0));
     strip.show ();
     delay (15);
@@ -192,6 +202,7 @@ void loop ()
     }
     else if (!control_ble)
     {
+      // read potentiometer value as input pin
       int pot_val = analogRead (POT_PIN);
       Serial.print ("potientiometer value: ");
       Serial.println (pot_val);
