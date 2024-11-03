@@ -1,77 +1,44 @@
 #include <Wire.h>
+#include <MPU6050.h>
 
-long AX, AY, AZ;
-float gfX, gfY, gfZ;
+MPU6050 mpu;
 
-
-long gyrX, gyrY, gyrZ;
-float rotX, rotY, rotZ;
-
-
+const int speakerPin = 9;  
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("initializing I2C...");
   Wire.begin();
-  Serial.println("Setting up MPU6050...");
-  setupMPU();
- 
+  mpu.initialize();
+
+  if (!mpu.testConnection()) {
+    Serial.println("MPU6050 connection failed!");
+    while (1);
+  }
+  Serial.println("MPU6050 initialized successfully.");
+
+  pinMode(speakerPin, OUTPUT);  // Set the speaker pin as an output
 }
 
 void loop() {
-  recordAccelRegisters();
-  //recordGyroRegisters();
-  printData();
-  delay(100);
- 
+  int16_t ax, ay, az;
+
+  // Get accelerometer values
+  mpu.getAcceleration(&ax, &ay, &az);
+
+  // Map the X-axis acceleration value to a frequency range (just an example)
+  int frequency = map(ax, -17000, 17000, 200, 1000);  // Map ax to a frequency range between 200 Hz and 1000 Hz
+
+  // Ensure the frequency stays within the range
+  frequency = constrain(frequency, 200, 1000);
+
+  // Output the tone to the speaker
+  tone(speakerPin, frequency);
+
+  // Print values to monitor changes in Serial Monitor
+  Serial.print("Accel X: ");
+  Serial.print(ax);
+  Serial.print(" | Frequency: ");
+  Serial.println(frequency);
+
+  delay(50); 
 }
-
-void setupMPU(){
-  Wire.beginTransmission(0b1101000);
-
-  if (Wire.endTransmission()==0){
-    Serial.println("MPU CONNECTED... I think... not sure what wire.endtransmission does");
-  }else{
-    Serial.println("not connection... Wire.endTransmission return 1");
-    while(1);
-  }
-  Wire.write(0x6B);
-  Wire.write(0b00000000);
-  Wire.endTransmission();
-  // set up for gyroscope
-  Wire.beginTransmission(0b1101000);
-  Wire.write(0x1C);
-  Wire.write(0b00000000);
-  Wire.endTransmission();
-  
-
-}
-void processAccelData(){
-  gfX = AX/16383.0;
-  gfY = AY/16383.0;
-  gfZ = AZ/16383.0;
-  
-
-}
-
-void recordAccelRegisters(){
-  Wire.beginTransmission(0b1101000);
-  Wire.write(0x3B);
-  Wire.endTransmission();
-  Wire.requestFrom(0b1101000,6);
-  while(Wire.available()<6); //3B through 40 registers
-  AX = Wire.read()<<8|Wire.read();
-  
-  AY = Wire.read()<<8|Wire.read();
-  AZ = Wire.read()<<8|Wire.read();
-
-  processAccelData();
-}
-
-void printData(){
-  Serial.print("Tring to print acceleration");
-  Serial.print(gfX);
-  Serial.print(gfY);
-  Serial.print(gfZ);
-}
-
