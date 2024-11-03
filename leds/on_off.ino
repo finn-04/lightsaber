@@ -68,6 +68,26 @@ void setup ()
   strip.setBrightness (255);
 }
 
+void light_up ()
+{
+  for (int i = 0; i < LED_COUNT; i++)
+  {
+    strip.setPixelColor (i, color);
+    strip.show ();
+    delay (15);
+  }
+}
+
+void turn_off ()
+{
+  for (int i = LED_COUNT - 1; i >= 0; i--)
+  {
+    strip.setPixelColor (i, strip.Color (0, 0, 0));
+    strip.show ();
+    delay (15);
+  }
+}
+
 void loop ()
 {
   // read button state
@@ -89,12 +109,12 @@ void loop ()
         if (is_on)
         {
           Serial.println ("on");
+          light_up ();
         }
         else
         {
           Serial.println ("off");
-          strip.clear ();
-          strip.show ();
+          turn_off ();
         }
       }
     }
