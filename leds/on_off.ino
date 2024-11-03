@@ -19,8 +19,13 @@ unsigned long last_debounce_time = 0;
 unsigned long debounce_delay = 50;
 // tracking button
 bool is_on = false;
-
+// custom service that Arduino will provide over BLE
+// service = collection of characteristics that defines specific functionality
+// 180F = UUID that identifies service
 BLEService myService ("180F");
+// characteristic within service
+// BLERead | BLEWrite = permissions for characteristic
+// 20 = maximum length of characteristic value in bytes
 BLECharacteristic myCharacteristic ("12345678-1234-5678-1234-56789abcdef0", BLERead | BLEWrite, 20);
 
 Adafruit_NeoPixel strip (LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -41,24 +46,23 @@ void setup ()
     Serial.println ("starting BLE failed");
     while (1);
   }
-
+  // sets name that BLE device will advertise
+  // when we scan for Bluetooh devices, this name shows up
   BLE.setLocalName ("NanoBLE");
+  // specifies service that is advertised to devices scanning for BLE services
   BLE.setAdvertisedService (myService);
+  // adds characteristic to service
   myService.addCharacteristic (myCharacteristic);
+  // registers service with BLE stack --> Arduino can respond to requests related to service
   BLE.addService (myService);
+  // initialize
   myCharacteristic.setValue ("0");
   BLE.advertise ();
   Serial.println ("BLE device active, waiting for connections...");
   strip.begin ();
+  strip.clear ();
   strip.show ();
   strip.setBrightness (255);
-
-  for (int i = 0; i < LED_COUNT; i++)
-  {
-    strip.setPixelColor (i, color);
-  }
-  
-  strip.show ();
 }
 
 void loop ()
@@ -86,6 +90,8 @@ void loop ()
         else
         {
           Serial.println ("off");
+          strip.clear ();
+          strip.show ();
         }
       }
     }
@@ -95,6 +101,7 @@ void loop ()
 
   if (is_on)
   {
+    // central = valriable of type BLEDevice that holds information about connected client device
     BLEDevice central = BLE.central ();
 
     if (central)
@@ -106,6 +113,7 @@ void loop ()
       {
         if (myCharacteristic.written ())
         {
+          // buffer to hold value
           char buffer [20];
           size_t length = myCharacteristic.valueLength ();
           myCharacteristic.readValue (buffer, sizeof (buffer));
@@ -114,7 +122,7 @@ void loop ()
           {
             buffer [length] = '\0';
           }
-
+          // convert buffer to string
           value = String ((char *) buffer);
           Serial.print ("received: ");
           Serial.println (value);
@@ -162,6 +170,7 @@ void loop ()
     else if (!control_ble)
     {
       int pot_val = analogRead (POT_PIN);
+
       Serial.print ("potientiometer value: ");
       Serial.println (pot_val);
       int range = map (pot_val, 0, 1023, 0, 255);
