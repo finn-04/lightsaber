@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang = "en">
+	<head>
+		<meta charset = "UTF-8">
+		<meta name = "viewport" content "width=device-width, initial-scale=1.0">
+		<title> character presets </title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				text-align: center;
+				margin-top: 50px;
+			}
+			button {
+				font-size: 20px;
+				padding: 10px 20px;
+				margin: 10px;
+				cursor: pointer;
+				background-color: #4CAF50;
+				color: white;
+				border: none;
+				border-radius: 5px;
+			}
+			button:hover {
+				background-color: #45a049;
+			}
+		</style>
+	</head>
+	<body>
+		<h1> choose a character preset </h1>
+		<div>
+			{% for character, number in presets.items () %}
+				<form action = "/send_number" method = "post" style = "display:inline;">
+					<button type = "submit" name = "character" value = "{{ character }}">{{ character }}</button>
+				</form>
+			{% endfor %}
+		</div>
+	</body>
+</html>
