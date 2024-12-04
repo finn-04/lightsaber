@@ -1,5 +1,7 @@
 # include <Adafruit_NeoPixel.h>
 # include <ArduinoBLE.h>
+// watchdog
+# include <avr/wdt.h>
 
 // pin connected to our lights
 # define LED_PIN    6
@@ -100,6 +102,8 @@ void turn_off ()
 
 void loop ()
 {
+  // reset watchdog timer to prevent reset
+  wdt_reset ()
   // read button state
   bool reading = digitalRead (button_pin);
   // check if button state has changed
