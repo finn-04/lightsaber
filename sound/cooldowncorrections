@@ -103,7 +103,7 @@ void loop() {
       // int16_t deltaZ = az - lastAz;
       // long movement_magnitude = sqrt (sq (deltaX) + sq (deltaY) + sq (deltaZ));
       // Play movement sound if significant movement is detected
-      if (!isPlaying && abs(ax - lastAx) > threshold && millis () - start_time > 1000) {
+      if (!isPlaying && abs(ax - lastAx) > threshold && millis () - start_time > 2000) {
       // if (!isPlaying && abs(ax - lastAx) > threshold) {
         Serial.println("Significant movement detected. Playing movement sound.");
         stopHum();  // Stop background hum
