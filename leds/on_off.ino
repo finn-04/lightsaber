@@ -83,7 +83,7 @@ void light_up ()
     strip.setPixelColor (i, color);
     // update strip
     strip.show ();
-    delay (15);
+    delay (20);
   }
 }
 
@@ -94,7 +94,7 @@ void turn_off ()
     // turn off
     strip.setPixelColor (i, strip.Color (0, 0, 0));
     strip.show ();
-    delay (15);
+    delay (20);
   }
 }
 
