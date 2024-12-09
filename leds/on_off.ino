@@ -8,6 +8,8 @@
 // pin conected to our potentiometer
 # define POT_PIN    A0
 
+bool XMAS = false;
+
 const int minimum = 0;
 const int maximum = 255;
 // where our button is connected
@@ -164,33 +166,44 @@ void loop ()
 
           if (value == "0")
           {
+            XMAS = false;
             color = strip.Color (255, 0, 0);
             Serial.println ("zero");
           }
           if (value == "1")
           {
+            XMAS = false;
             color = strip.Color (0, 0, 255);
             Serial.println ("one");
           }
           if (value == "2")
           {
+            XMAS = false;
             color = strip.Color (255, 255, 0);
             Serial.println ("two");
           }
           if (value == "3")
           {
+            XMAS = false;
             color = strip.Color (0, 255, 0);
             Serial.println ("three");
           }
           if (value == "4")
           {
+            XMAS = false;
             color = strip.Color (255, 0, 255);
             Serial.println ("four");
           }
           if (value == "5")
           {
+            XMAS = false;
             color = strip.Color (255, 255, 255);
             Serial.println ("five");
+          }
+          if (value == "6")
+          {
+            XMAS = true;
+            Serial.println ("six");
           }
 
           Serial.println ("color set by Bluetooth");
@@ -204,11 +217,10 @@ void loop ()
     {
       // read potentiometer value as input pin
       int pot_val = analogRead (POT_PIN);
-      Serial.print ("potientiometer value: ");
-      Serial.println (pot_val);
       // check if difference from last value is greater than threshold
       if (last_pot_val == -1 || abs (pot_val - last_pot_val) > pot_threshold)
       {
+        XMAS = false;
         int range = map (pot_val, 0, 1023, 0, 255);
         int rgb_range = map (range, minimum, maximum, 0, 6);
 
@@ -255,9 +267,40 @@ void loop ()
         last_pot_val = pot_val;
       }
     }
-    for (int i = 0; i < LED_COUNT; i++)
+    if (XMAS)
     {
-      strip.setPixelColor (i, color);
+      uint32_t color1 = strip.Color (255, 0, 0);
+      uint32_t color2 = strip.Color (0, 255, 0);
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        if (i >= 0 && i < 4)
+        {
+          strip.setPixelColor (i, color1);
+        }
+        else if (i >= 4 && i < 8)
+        {
+          strip.setPixelColor (i, color2);
+        }
+        else if (i >= 8 && i < 12)
+        {
+          strip.setPixelColor (i, color1);
+        }
+        else if (i >= 12 && i < 16)
+        {
+          strip.setPixelColor (i, color2);
+        }
+        else
+        {
+          strip.setPixelColor (i, color1);
+        }
+      }
+    }
+    else
+    {
+      for (int i = 0; i < LED_COUNT; i++)
+      {
+        strip.setPixelColor (i, color);
+      }
     }
     strip.show ();
   }
