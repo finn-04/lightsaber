@@ -289,6 +289,14 @@ void loop ()
         {
           strip.setPixelColor (i, color2);
         }
+        else if (i >= 16 && i < 20)
+        {
+          strip.setPixelColor (i, color1);
+        }
+        else if (i >= 20 && i < 24)
+        {
+          strip.setPixelColor (i, color2);
+        }
         else
         {
           strip.setPixelColor (i, color1);
