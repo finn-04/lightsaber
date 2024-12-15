@@ -4,7 +4,7 @@
 // pin connected to our lights
 # define LED_PIN    6
 // number of lights attached
-# define LED_COUNT  20
+# define LED_COUNT  30
 // pin conected to our potentiometer
 # define POT_PIN    A0
 
