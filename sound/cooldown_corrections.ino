@@ -7,7 +7,7 @@ MPU6050 mpu;
 TMRpcm audio;
 
 const int speakerPin = 9;
-const int buttonPin = 2;
+const int buttonPin = 3;
 const int threshold = 3000;   // Movement threshold
 const int chipSelect = 10;    // SD card CS pin
 int16_t lastAx = 0;
