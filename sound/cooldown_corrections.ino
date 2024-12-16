@@ -17,7 +17,8 @@ bool deviceOn = false;        // Tracks if the device is "on"
 int buttonpress = 0;
 // 2 seconds before checking to play swing sound again
 unsigned long last_motion_time = 0;
-const unsigned long motion_cooldown = 1000;
+const unsigned long motion_cooldown = 2000;
+const unsigned long start_cooldown = 3000;
 unsigned long start_time = millis ();
 unsigned long the_start = millis ();
 
@@ -78,23 +79,25 @@ void loop() {
       Serial.println("Device is ON. Playing 'on' sound.");
       audio.play("on.wav");  // Play "on" sound
       while (audio.isPlaying()) delay(100);  // Wait for "on" sound to finish
+      mpu.getAcceleration (&ax, &ay, &az);
+      lastAx = ax;
     } else {
       Serial.println("Device is OFF. Playing 'off' sound.");
       stopHum();              // Stop background audio
       audio.play("off.wav");  // Play "off" sound
       while (audio.isPlaying()) delay(100);  // Wait for "off" sound to finish
     }
-    delay(300); // Additional debounce delay to avoid repeated toggling
+    delay(200); // Additional debounce delay to avoid repeated toggling
   }
 
   // If device is ON, allow hum and movement sounds
   if (deviceOn) 
   {
     // Get accelerometer values
-    if (abs (millis () - the_start) < motion_cooldown)
-    {
-      return;
-    }
+    // if (abs (millis () - the_start) < start_cooldown)
+    // {
+    //   return;
+    // }
     mpu.getAcceleration(&ax, &ay, &az);
 
     // Play hum sound if no other audio is playing
