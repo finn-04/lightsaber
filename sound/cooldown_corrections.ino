@@ -7,8 +7,8 @@ MPU6050 mpu;
 TMRpcm audio;
 
 const int speakerPin = 9;
-const int buttonPin = 2;
-const int threshold = 3000;   // Movement threshold
+const int buttonPin = 3;
+const int threshold = 2500;   // Movement threshold
 const int chipSelect = 10;    // SD card CS pin
 int16_t lastAx = 0;
 bool isPlaying = false;       // Tracks if button or movement audio is currently playing
@@ -17,8 +17,9 @@ bool deviceOn = false;        // Tracks if the device is "on"
 int buttonpress = 0;
 // 2 seconds before checking to play swing sound again
 unsigned long last_motion_time = 0;
-const unsigned long motion_cooldown = 3000;
+const unsigned long motion_cooldown = 1000;
 unsigned long start_time = millis ();
+unsigned long the_start = millis ();
 
 
 void setup() {
@@ -73,6 +74,7 @@ void loop() {
     deviceOn = !(buttonpress % 2 == 0);
 
     if (deviceOn) {
+      the_start = millis ();
       Serial.println("Device is ON. Playing 'on' sound.");
       audio.play("on.wav");  // Play "on" sound
       while (audio.isPlaying()) delay(100);  // Wait for "on" sound to finish
@@ -89,6 +91,10 @@ void loop() {
   if (deviceOn) 
   {
     // Get accelerometer values
+    if (abs (millis () - the_start) < motion_cooldown)
+    {
+      return;
+    }
     mpu.getAcceleration(&ax, &ay, &az);
 
     // Play hum sound if no other audio is playing
